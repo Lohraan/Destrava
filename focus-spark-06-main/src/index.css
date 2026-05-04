@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 200 60% 98%;
+    --foreground: 210 30% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 30% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 30% 20%;
+
+    --primary: 200 70% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 200 70% 94%;
+
+    --secondary: 150 40% 92%;
+    --secondary-foreground: 160 30% 25%;
+
+    --muted: 200 30% 95%;
+    --muted-foreground: 210 15% 50%;
+
+    --accent: 150 50% 70%;
+    --accent-foreground: 160 40% 20%;
+    --accent-soft: 150 50% 94%;
+
+    --destructive: 0 60% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 30% 90%;
+    --input: 200 30% 92%;
+    --ring: 200 70% 65%;
+
+    --radius: 1.5rem;
+
+    --gradient-sky: radial-gradient(circle at top left, hsl(200 80% 92%) 0%, transparent 34%), radial-gradient(circle at bottom right, hsl(35 90% 92%) 0%, transparent 34%), linear-gradient(160deg, hsl(205 70% 97%) 0%, hsl(150 50% 96%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(200 70% 70%), hsl(180 60% 65%));
+    --gradient-soft: linear-gradient(135deg, hsl(150 50% 72%), hsl(180 50% 70%));
+    --gradient-warm: linear-gradient(135deg, hsl(35 90% 70%), hsl(12 80% 72%));
+
+    --shadow-soft: 0 8px 30px -12px hsl(200 50% 50% / 0.15);
+    --shadow-glow: 0 0 50px hsl(200 70% 75% / 0.4);
+
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-gentle: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dark {
+    --background: 210 30% 10%;
+    --foreground: 200 30% 95%;
+    --card: 210 30% 13%;
+    --card-foreground: 200 30% 95%;
+    --popover: 210 30% 13%;
+    --popover-foreground: 200 30% 95%;
+    --primary: 200 60% 60%;
+    --primary-foreground: 210 30% 10%;
+    --primary-soft: 200 40% 20%;
+    --secondary: 210 25% 18%;
+    --secondary-foreground: 200 30% 95%;
+    --muted: 210 25% 16%;
+    --muted-foreground: 200 15% 65%;
+    --accent: 150 40% 50%;
+    --accent-foreground: 0 0% 100%;
+    --accent-soft: 150 30% 20%;
+    --destructive: 0 50% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 25% 22%;
+    --input: 210 25% 22%;
+    --ring: 200 60% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  .transition-gentle {
+    transition: var(--transition-gentle);
+  }
+  .animate-fade-in {
+    animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-fade-up {
+    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
