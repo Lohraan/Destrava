@@ -10,13 +10,20 @@ interface Props {
 export const Home = ({ onSelect, todayCount, activeDays }: Props) => {
   return (
     <div className="w-full text-left">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-7 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#3B82F6]/25 to-[#8B5CF6]/25 text-slate-100 ring-1 ring-white/10">
-            ✦
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/10">
+            <img
+              src="/logo.png"
+              alt="DestravaAí"
+              className="h-full w-full rounded-xl object-contain"
+            />
           </div>
 
-          <p className="text-sm font-semibold text-slate-100">DestravaAí</p>
+          <div>
+            <p className="text-sm font-semibold text-slate-100">DestravaAí</p>
+            <p className="text-xs text-slate-500">foco sem pressão</p>
+          </div>
         </div>
 
         <div className="rounded-full bg-white/[0.06] px-3 py-1 text-xs text-slate-300 ring-1 ring-white/10">
