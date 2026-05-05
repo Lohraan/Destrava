@@ -1,4 +1,4 @@
-import { BookOpen, Briefcase } from "lucide-react";
+import { BookOpen, Briefcase, ChevronRight } from "lucide-react";
 import type { Mode } from "@/lib/flows";
 
 interface Props {
@@ -10,106 +10,117 @@ interface Props {
 export const Home = ({ onSelect, todayCount, activeDays }: Props) => {
   return (
     <div className="w-full text-left">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#3B82F6]/25 to-[#8B5CF6]/25 text-slate-100 ring-1 ring-white/10">
+            ✦
+          </div>
 
-      {/* HEADER */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
-          ✨
+          <p className="text-sm font-semibold text-slate-100">DestravaAí</p>
         </div>
-        <p className="text-sm font-medium text-slate-200">DestravaAí</p>
+
+        <div className="rounded-full bg-white/[0.06] px-3 py-1 text-xs text-slate-300 ring-1 ring-white/10">
+          {todayCount} hoje
+        </div>
       </div>
 
-      <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
+      <p className="mb-2 text-xs uppercase tracking-[0.28em] text-slate-500">
         FOCO DE HOJE
       </p>
 
-      <h1 className="text-3xl text-slate-100 mb-3 leading-tight">
+      <h1 className="mb-3 text-3xl font-semibold leading-tight tracking-tight text-slate-100">
         Vamos com calma hoje?
       </h1>
 
-      <p className="text-slate-400 mb-6">
+      <p className="mb-8 text-sm leading-6 text-slate-400">
         Sem pressão, sem culpa. Escolha um tamanho que caiba na sua energia.
       </p>
 
-      {/* CARDS */}
-      <div className="flex gap-4 mb-6">
-        <div className="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-          <p className="text-xs text-slate-500 mb-1">Sequência</p>
-          <p className="text-xl text-slate-100">
+      <div className="mb-6 grid grid-cols-2 gap-4">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.055] p-4 shadow-xl shadow-black/10">
+          <p className="mb-2 text-xs text-slate-400">Sequência</p>
+          <p className="text-xl font-semibold text-slate-100">
             {activeDays} {activeDays === 1 ? "dia" : "dias"}
           </p>
         </div>
 
-        <div className="flex-1 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-          <p className="text-xs text-slate-500 mb-1">Hoje</p>
-          <p className="text-xl text-slate-100">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.055] p-4 shadow-xl shadow-black/10">
+          <p className="mb-2 text-xs text-slate-400">Hoje</p>
+          <p className="text-xl font-semibold text-slate-100">
             {todayCount} {todayCount === 1 ? "tarefa" : "tarefas"}
           </p>
 
-          <div className="mt-2 h-1 w-full rounded bg-white/10">
+          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
             <div
-              className="h-1 rounded bg-indigo-400"
+              className="h-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]"
               style={{ width: `${Math.min(todayCount * 20, 100)}%` }}
             />
           </div>
         </div>
       </div>
 
-      {/* RECOMENDADO */}
       <button
         onClick={() => onSelect("tentar")}
-        className="w-full mb-6 rounded-2xl bg-[#C9A36B] p-5 text-left text-black hover:opacity-90 transition"
+        className="mb-4 w-full rounded-3xl bg-[#C9A36B] p-5 text-left text-[#121212] shadow-xl shadow-black/10 transition hover:brightness-105"
       >
-        <p className="text-xs opacity-70 mb-1">RECOMENDADO AGORA</p>
-        <p className="text-lg font-medium">Começo rápido · 2 min</p>
-        <p className="text-sm opacity-70">Só para dar o primeiro passo</p>
+        <p className="mb-2 text-xs uppercase tracking-wide opacity-70">
+          Recomendado agora
+        </p>
+
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-lg font-semibold">Começo rápido · 2 min</p>
+            <p className="mt-1 text-sm opacity-75">Só para dar o primeiro passo</p>
+          </div>
+
+          <ChevronRight className="h-5 w-5 opacity-80" />
+        </div>
       </button>
 
-      {/* AÇÕES */}
-      <div className="flex flex-col gap-4">
+      <div className="space-y-3">
         <button
           onClick={() => onSelect("estudar")}
-          className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-4 hover:bg-white/[0.06] transition"
+          className="w-full rounded-3xl border border-white/10 bg-white/[0.055] p-4 text-left shadow-xl shadow-black/10 transition hover:border-blue-400/30 hover:bg-white/[0.08]"
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-white/10 p-2">
-              <BookOpen size={18} />
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/15 text-sky-200 ring-1 ring-blue-300/15">
+              <BookOpen className="h-6 w-6" strokeWidth={2.2} />
             </div>
-            <div>
-              <p className="text-slate-100">Sessão de estudo</p>
-              <p className="text-xs text-slate-400">25 min com pausa guiada</p>
+
+            <div className="flex-1">
+              <p className="font-semibold text-slate-100">Sessão de estudo</p>
+              <p className="mt-1 text-sm text-slate-400">25 min com pausa guiada</p>
             </div>
+
+            <p className="text-sm text-slate-400">25 min</p>
           </div>
-          <p className="text-xs text-slate-400">25 min</p>
         </button>
 
         <button
           onClick={() => onSelect("trabalhar")}
-          className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-4 hover:bg-white/[0.06] transition"
+          className="w-full rounded-3xl border border-white/10 bg-white/[0.055] p-4 text-left shadow-xl shadow-black/10 transition hover:border-violet-400/30 hover:bg-white/[0.08]"
         >
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-white/10 p-2">
-              <Briefcase size={18} />
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-200 ring-1 ring-violet-300/15">
+              <Briefcase className="h-6 w-6" strokeWidth={2.2} />
             </div>
-            <div>
-              <p className="text-slate-100">Bloco de trabalho</p>
-              <p className="text-xs text-slate-400">45 min de foco profundo</p>
+
+            <div className="flex-1">
+              <p className="font-semibold text-slate-100">Bloco de trabalho</p>
+              <p className="mt-1 text-sm text-slate-400">45 min de foco profundo</p>
             </div>
+
+            <p className="text-sm text-slate-400">45 min</p>
           </div>
-          <p className="text-xs text-slate-400">45 min</p>
         </button>
       </div>
 
-      {/* EXTRA */}
-      <div className="mt-6 text-center">
-        <button
-          onClick={() => onSelect("dificil")}
-          className="text-xs text-slate-500 hover:text-slate-300 transition"
-        >
-          Hoje está difícil
-        </button>
-      </div>
-
+      <button
+        onClick={() => onSelect("dificil")}
+        className="mt-5 w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center text-sm text-slate-400 transition hover:bg-white/[0.06] hover:text-slate-200"
+      >
+        Hoje está difícil
+      </button>
     </div>
   );
 };
