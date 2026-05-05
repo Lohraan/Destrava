@@ -73,130 +73,132 @@ export const FlowRunner = ({ mode, onExit, onTaskDone }: Props) => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#0B1220] via-[#0F172A] to-[#111827] flex flex-col items-center justify-center px-4">
+    <div className="min-h-[100dvh] w-full bg-gradient-to-b from-[#0B1220] via-[#0F172A] to-[#111827] px-4">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-md flex-col">
+        <header className="sticky top-0 z-20 flex items-center justify-between bg-[#0B1220]/80 py-4 backdrop-blur-xl">
+          <button
+            onClick={handleExit}
+            className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-slate-200"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            voltar
+          </button>
 
-      {/* TOPO */}
-      <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-        <button
-          onClick={handleExit}
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-200 text-sm"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          voltar
-        </button>
+          <button
+            onClick={() => setSoundOn((prev) => !prev)}
+            disabled={phase !== "doing"}
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition ${
+              phase === "doing"
+                ? "bg-white/10 text-slate-200 hover:bg-white/15"
+                : "bg-white/5 text-slate-500"
+            }`}
+          >
+            {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            <span className="hidden sm:inline">
+              {soundOn ? "Som ligado" : "Som"}
+            </span>
+          </button>
+        </header>
 
-        <button
-          onClick={() => setSoundOn((prev) => !prev)}
-          disabled={phase !== "doing"}
-          className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm ${
-            phase === "doing"
-              ? "bg-white/10 text-slate-200"
-              : "bg-white/5 text-slate-500"
-          }`}
-        >
-          {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-        </button>
-      </div>
-
-      {/* LABEL */}
-      <p className="text-xs uppercase tracking-widest text-slate-500 mb-3 mt-16">
-        {flow.label} · passo {index + 1} de {flow.tasks.length}
-      </p>
-
-      {/* INTRO */}
-      {phase === "intro" && (
-        <div className="text-center">
-          <h2 className="text-3xl text-slate-100 mb-4">{task.title}</h2>
-          <p className="text-slate-400 mb-10">
-            {task.minutes} minutos
+        <main className="flex flex-1 flex-col items-center px-1 pb-8 pt-6 sm:justify-center sm:pt-10">
+          <p className="mb-4 text-xs uppercase tracking-widest text-slate-500">
+            {flow.label} · passo {index + 1} de {flow.tasks.length}
           </p>
 
-          <button
-            onClick={handleStart}
-            className="bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white px-10 py-4 rounded-full"
-          >
-            Começar
-          </button>
-        </div>
-      )}
+          {phase === "intro" && (
+            <div className="w-full text-center">
+              <h2 className="mx-auto mb-4 max-w-xs text-3xl leading-tight text-slate-100">
+                {task.title}
+              </h2>
 
-      {/* DOING */}
-      {phase === "doing" && (
-        <div className="flex flex-col items-center">
-          <Timer minutes={task.minutes} onComplete={handleComplete} />
+              <p className="mb-8 text-slate-400">
+                {task.minutes} {task.minutes === 1 ? "minuto" : "minutos"}
+              </p>
 
-          <button
-            onClick={handleComplete}
-            className="mt-8 text-sm text-slate-400 hover:text-slate-200"
-          >
-            já terminei
-          </button>
-        </div>
-      )}
+              <button
+                onClick={handleStart}
+                className="rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-10 py-4 text-white shadow-lg transition hover:scale-[1.02]"
+              >
+                Começar
+              </button>
+            </div>
+          )}
 
-      {/* DONE */}
-      {phase === "done" && (
-        <div className="text-center">
-          <Check className="h-10 w-10 text-sky-300 mx-auto mb-6" />
+          {phase === "doing" && (
+            <div className="flex w-full flex-col items-center">
+              <Timer minutes={task.minutes} onComplete={handleComplete} />
 
-          <h2 className="text-2xl text-slate-100 mb-6">{feedback}</h2>
+              <button
+                onClick={handleComplete}
+                className="mt-6 text-sm text-slate-400 hover:text-slate-200"
+              >
+                já terminei
+              </button>
+            </div>
+          )}
 
-          <div className="flex flex-col gap-3 items-center">
+          {phase === "done" && (
+            <div className="w-full text-center">
+              <Check className="mx-auto mb-5 h-10 w-10 text-sky-300" />
 
-            <button
-              onClick={handleBreak}
-              className="bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white px-8 py-3 rounded-full w-64"
-            >
-              Fazer pausa
-            </button>
+              <h2 className="mx-auto mb-6 max-w-xs text-2xl leading-tight text-slate-100">
+                {feedback}
+              </h2>
 
-            <button
-              onClick={handleRepeat}
-              className="bg-white/5 text-slate-300 px-8 py-3 rounded-full w-64"
-            >
-              Repetir este bloco
-            </button>
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  onClick={handleBreak}
+                  className="w-full max-w-xs rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-8 py-3 text-white"
+                >
+                  Fazer pausa
+                </button>
 
-            {!isLast && (
+                <button
+                  onClick={handleRepeat}
+                  className="w-full max-w-xs rounded-full bg-white/5 px-8 py-3 text-slate-300"
+                >
+                  Repetir este bloco
+                </button>
+
+                {!isLast && (
+                  <button
+                    onClick={handleNext}
+                    className="mt-2 text-slate-400 hover:text-slate-200"
+                  >
+                    Próximo passo
+                  </button>
+                )}
+
+                <button
+                  onClick={onExit}
+                  className="mt-1 text-slate-500 hover:text-slate-300"
+                >
+                  Escolher outro modo
+                </button>
+              </div>
+            </div>
+          )}
+
+          {phase === "break" && (
+            <div className="w-full text-center">
+              <h2 className="mb-3 text-2xl text-slate-100">Respira um pouco</h2>
+
+              <p className="mx-auto mb-6 max-w-xs text-slate-400">
+                Você focou. Agora só descansa um pouco.
+              </p>
+
+              <Timer minutes={5} onComplete={handleNext} />
+
               <button
                 onClick={handleNext}
-                className="text-slate-400 mt-2"
+                className="mt-6 text-slate-400 hover:text-slate-200"
               >
-                Próximo passo
+                pular pausa
               </button>
-            )}
-
-            <button
-              onClick={onExit}
-              className="text-slate-500 mt-2"
-            >
-              Escolher outro modo
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* BREAK */}
-      {phase === "break" && (
-        <div className="text-center">
-          <h2 className="text-2xl text-slate-100 mb-4">
-            Respira um pouco
-          </h2>
-
-          <p className="text-slate-400 mb-8">
-            Você focou. Agora só descansa um pouco.
-          </p>
-
-          <Timer minutes={5} onComplete={handleNext} />
-
-          <button
-            onClick={handleNext}
-            className="mt-6 text-slate-400"
-          >
-            pular pausa
-          </button>
-        </div>
-      )}
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 };
