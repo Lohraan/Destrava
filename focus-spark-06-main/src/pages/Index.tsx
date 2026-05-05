@@ -7,7 +7,8 @@ import { AuthButton } from "@/components/AuthButton";
 
 const Index = () => {
   const [mode, setMode] = useState<Mode | null>(null);
-  const { count, activeDays, increment, resetProgress } = useDailyProgress();
+  const { count, activeDays, totalCompleted, increment, resetProgress } =
+    useDailyProgress();
 
   const handleReset = () => {
     const confirmReset = confirm("Tem certeza que deseja recomeçar seu progresso?");
@@ -15,35 +16,40 @@ const Index = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0B1220] via-[#0F172A] to-[#111827] px-5 py-8 sm:py-12">
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md flex-col items-center justify-center">
-        {mode === null ? (
-          <>
-            <div className="mb-6 flex w-full justify-end">
-              <AuthButton />
+    <main className="min-h-screen bg-[#070D1A] text-slate-100">
+      {mode === null ? (
+        <div className="mx-auto min-h-screen w-full max-w-5xl px-5 pb-16">
+          <header className="flex items-center justify-between border-b border-white/10 py-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white p-1.5">
+                <img
+                  src="/logo.png"
+                  alt="DestravaAí"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+
+              <span className="font-semibold text-slate-100">DestravaAí</span>
             </div>
 
-            <Home
-              onSelect={setMode}
-              todayCount={count}
-              activeDays={activeDays}
-            />
+            <AuthButton />
+          </header>
 
-            <button
-              onClick={handleReset}
-              className="mt-8 text-xs text-slate-500 hover:text-slate-300 transition"
-            >
-              Recomeçar progresso
-            </button>
-          </>
-        ) : (
-          <FlowRunner
-            mode={mode}
-            onExit={() => setMode(null)}
-            onTaskDone={increment}
+          <Home
+            onSelect={setMode}
+            todayCount={count}
+            activeDays={activeDays}
+            totalCompleted={totalCompleted}
+            onReset={handleReset}
           />
-        )}
-      </div>
+        </div>
+      ) : (
+        <FlowRunner
+          mode={mode}
+          onExit={() => setMode(null)}
+          onTaskDone={increment}
+        />
+      )}
     </main>
   );
 };

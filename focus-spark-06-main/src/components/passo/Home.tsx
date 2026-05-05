@@ -1,133 +1,227 @@
-import { BookOpen, Briefcase, ChevronRight } from "lucide-react";
+import {
+  BookOpen,
+  Briefcase,
+  Cloud,
+  Play,
+  Sparkles,
+  Wind,
+} from "lucide-react";
 import type { Mode } from "@/lib/flows";
 
 interface Props {
   onSelect: (mode: Mode) => void;
   todayCount: number;
   activeDays: number;
+  totalCompleted: number;
+  onReset: () => void;
 }
 
-export const Home = ({ onSelect, todayCount, activeDays }: Props) => {
+export const Home = ({
+  onSelect,
+  todayCount,
+  activeDays,
+  totalCompleted,
+  onReset,
+}: Props) => {
+  const focusMinutes = totalCompleted * 5;
+
   return (
-    <div className="w-full text-left">
-      <div className="mb-7 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/10">
-            <img
-              src="/logo.png"
-              alt="DestravaAí"
-              className="h-full w-full rounded-xl object-contain"
-            />
-          </div>
+    <div className="relative overflow-hidden pb-20 pt-12">
+      <div className="pointer-events-none absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute right-10 top-56 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
 
-          <div>
-            <p className="text-sm font-semibold text-slate-100">DestravaAí</p>
-            <p className="text-xs text-slate-500">foco sem pressão</p>
-          </div>
+      <section className="relative mx-auto max-w-3xl text-center">
+        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-violet-400/20 bg-violet-500/10 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.22em] text-violet-300">
+          <Sparkles className="h-3.5 w-3.5" />
+          Modo calmo ativo
         </div>
 
-        <div className="rounded-full bg-white/[0.06] px-3 py-1 text-xs text-slate-300 ring-1 ring-white/10">
-          {todayCount} hoje
-        </div>
-      </div>
+        <h1 className="text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
+          Respire fundo.
+          <br />
+          O que vamos{" "}
+          <span className="bg-gradient-to-r from-violet-300 to-cyan-300 bg-clip-text text-transparent">
+            destravar
+          </span>{" "}
+          hoje?
+        </h1>
 
-      <p className="mb-2 text-xs uppercase tracking-[0.28em] text-slate-500">
-        FOCO DE HOJE
-      </p>
-
-      <h1 className="mb-3 text-3xl font-semibold leading-tight tracking-tight text-slate-100">
-        Vamos com calma hoje?
-      </h1>
-
-      <p className="mb-8 text-sm leading-6 text-slate-400">
-        Sem pressão, sem culpa. Escolha um tamanho que caiba na sua energia.
-      </p>
-
-      <div className="mb-6 grid grid-cols-2 gap-4">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.055] p-4 shadow-xl shadow-black/10">
-          <p className="mb-2 text-xs text-slate-400">Sequência</p>
-          <p className="text-xl font-semibold text-slate-100">
-            {activeDays} {activeDays === 1 ? "dia" : "dias"}
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-white/[0.055] p-4 shadow-xl shadow-black/10">
-          <p className="mb-2 text-xs text-slate-400">Hoje</p>
-          <p className="text-xl font-semibold text-slate-100">
-            {todayCount} {todayCount === 1 ? "tarefa" : "tarefas"}
-          </p>
-
-          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6]"
-              style={{ width: `${Math.min(todayCount * 20, 100)}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      <button
-        onClick={() => onSelect("tentar")}
-        className="mb-4 w-full rounded-3xl bg-[#C9A36B] p-5 text-left text-[#121212] shadow-xl shadow-black/10 transition hover:brightness-105"
-      >
-        <p className="mb-2 text-xs uppercase tracking-wide opacity-70">
-          Recomendado agora
+        <p className="mx-auto mt-6 max-w-xl text-sm leading-6 text-slate-400 sm:text-base">
+          Sem pressão, sem culpa. Escolha um tamanho que caiba na sua energia.
         </p>
 
-        <div className="flex items-center justify-between gap-4">
+        <div className="mt-10 flex items-center justify-center gap-10">
           <div>
-            <p className="text-lg font-semibold">Começo rápido · 2 min</p>
-            <p className="mt-1 text-sm opacity-75">Só para dar o primeiro passo</p>
+            <p className="font-mono text-2xl font-semibold text-white">
+              {String(activeDays).padStart(2, "0")}
+            </p>
+            <p className="mt-1 text-[10px] uppercase tracking-widest text-slate-500">
+              sequência
+            </p>
           </div>
 
-          <ChevronRight className="h-5 w-5 opacity-80" />
+          <div>
+            <p className="font-mono text-2xl font-semibold text-white">
+              {String(focusMinutes).padStart(2, "0")}
+            </p>
+            <p className="mt-1 text-[10px] uppercase tracking-widest text-slate-500">
+              min foco
+            </p>
+          </div>
+
+          <div>
+            <p className="font-mono text-2xl font-semibold text-white">
+              {String(todayCount).padStart(2, "0")}
+            </p>
+            <p className="mt-1 text-[10px] uppercase tracking-widest text-slate-500">
+              blocos
+            </p>
+          </div>
         </div>
-      </button>
+      </section>
 
-      <div className="space-y-3">
+      <section className="relative mx-auto mt-16 max-w-4xl rounded-[2rem] border border-cyan-300/30 bg-slate-900/60 p-6 shadow-[0_0_45px_rgba(34,211,238,0.14)] backdrop-blur-xl sm:p-10">
+        <p className="mb-4 text-sm font-medium text-emerald-300">
+          Sugestão imediata
+        </p>
+
+        <h2 className="text-2xl font-semibold text-white">
+          Começo rápido · 2 min
+        </h2>
+
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
+          Só para dar o primeiro passo. Sem cobranças, sem cronômetro pesado —
+          apenas dois minutos para sair da inércia.
+        </p>
+
         <button
-          onClick={() => onSelect("estudar")}
-          className="w-full rounded-3xl border border-white/10 bg-white/[0.055] p-4 text-left shadow-xl shadow-black/10 transition hover:border-blue-400/30 hover:bg-white/[0.08]"
+          onClick={() => onSelect("tentar")}
+          className="mt-7 inline-flex items-center gap-3 rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]"
         >
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/15 text-sky-200 ring-1 ring-blue-300/15">
-              <BookOpen className="h-6 w-6" strokeWidth={2.2} />
+          <Play className="h-4 w-4 fill-slate-950" />
+          Começar agora
+        </button>
+      </section>
+
+      <section className="relative mx-auto mt-14 max-w-4xl">
+        <div className="mb-5 flex items-center justify-between">
+          <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
+            Sessões de foco
+          </p>
+
+          <button className="text-xs text-violet-300 hover:text-violet-200">
+            Ver todas
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          <button
+            onClick={() => onSelect("estudar")}
+            className="group flex w-full items-center gap-4 rounded-2xl border border-white/15 bg-white/[0.035] p-4 text-left transition hover:border-violet-300/40 hover:bg-white/[0.06]"
+          >
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.04] text-violet-300">
+              <BookOpen className="h-6 w-6" />
             </div>
 
             <div className="flex-1">
-              <p className="font-semibold text-slate-100">Sessão de estudo</p>
-              <p className="mt-1 text-sm text-slate-400">25 min com pausa guiada</p>
+              <p className="font-semibold text-white">Sessão de estudo</p>
+              <p className="mt-1 text-sm text-slate-400">
+                25 min com pausa guiada
+              </p>
             </div>
 
-            <p className="text-sm text-slate-400">25 min</p>
-          </div>
-        </button>
+            <p className="text-sm text-slate-400">25m</p>
 
-        <button
-          onClick={() => onSelect("trabalhar")}
-          className="w-full rounded-3xl border border-white/10 bg-white/[0.055] p-4 text-left shadow-xl shadow-black/10 transition hover:border-violet-400/30 hover:bg-white/[0.08]"
-        >
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-200 ring-1 ring-violet-300/15">
-              <Briefcase className="h-6 w-6" strokeWidth={2.2} />
+            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-slate-300 transition group-hover:border-violet-300/50 group-hover:text-white">
+              <Play className="h-4 w-4 fill-current" />
+            </div>
+          </button>
+
+          <button
+            onClick={() => onSelect("trabalhar")}
+            className="group flex w-full items-center gap-4 rounded-2xl border border-white/15 bg-white/[0.035] p-4 text-left transition hover:border-cyan-300/40 hover:bg-white/[0.06]"
+          >
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.04] text-cyan-300">
+              <Briefcase className="h-6 w-6" />
             </div>
 
             <div className="flex-1">
-              <p className="font-semibold text-slate-100">Bloco de trabalho</p>
-              <p className="mt-1 text-sm text-slate-400">45 min de foco profundo</p>
+              <p className="font-semibold text-white">Bloco de trabalho</p>
+              <p className="mt-1 text-sm text-slate-400">
+                45 min de foco profundo
+              </p>
             </div>
 
-            <p className="text-sm text-slate-400">45 min</p>
-          </div>
-        </button>
-      </div>
+            <p className="text-sm text-slate-400">45m</p>
 
-      <button
-        onClick={() => onSelect("dificil")}
-        className="mt-5 w-full rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-center text-sm text-slate-400 transition hover:bg-white/[0.06] hover:text-slate-200"
-      >
-        Hoje está difícil
-      </button>
+            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-slate-300 transition group-hover:border-cyan-300/50 group-hover:text-white">
+              <Play className="h-4 w-4 fill-current" />
+            </div>
+          </button>
+
+          <button
+            onClick={() => onSelect("dificil")}
+            className="group flex w-full items-center gap-4 rounded-2xl border border-white/15 bg-white/[0.035] p-4 text-left transition hover:border-violet-300/40 hover:bg-white/[0.06]"
+          >
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.04] text-violet-300">
+              <Wind className="h-6 w-6" />
+            </div>
+
+            <div className="flex-1">
+              <p className="font-semibold text-white">Respiro criativo</p>
+              <p className="mt-1 text-sm text-slate-400">
+                Um passo mínimo para dias difíceis
+              </p>
+            </div>
+
+            <p className="text-sm text-slate-400">2m</p>
+
+            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-slate-300 transition group-hover:border-violet-300/50 group-hover:text-white">
+              <Play className="h-4 w-4 fill-current" />
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section className="relative mx-auto mt-20 max-w-4xl rounded-[2rem] border border-dashed border-white/25 bg-white/[0.02] p-8 text-center">
+        <Cloud className="mx-auto mb-4 h-6 w-6 text-slate-500" />
+
+        <h2 className="text-xl font-semibold text-white">
+          Hoje está sendo difícil?
+        </h2>
+
+        <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-slate-400">
+          Não force produtividade quando a mente pede descanso. Algo mais gentil
+          também pode ajudar.
+        </p>
+
+        <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+          <button
+            onClick={() => onSelect("dificil")}
+            className="rounded-full border border-white/20 px-5 py-2 text-sm text-slate-300 transition hover:border-violet-300/40 hover:text-white"
+          >
+            Apenas respirar
+          </button>
+
+          <button
+            onClick={() => onSelect("tentar")}
+            className="rounded-full border border-white/20 px-5 py-2 text-sm text-slate-300 transition hover:border-cyan-300/40 hover:text-white"
+          >
+            Começar com 2 min
+          </button>
+
+          <button
+            onClick={onReset}
+            className="rounded-full border border-white/20 px-5 py-2 text-sm text-slate-500 transition hover:border-red-300/40 hover:text-red-200"
+          >
+            Recomeçar progresso
+          </button>
+        </div>
+      </section>
+
+      <footer className="mt-24 text-center text-[10px] uppercase tracking-[0.4em] text-slate-600">
+        DestravaAí · feito para a calma mental
+      </footer>
     </div>
   );
 };
