@@ -4,16 +4,33 @@ import { FlowRunner } from "@/components/passo/FlowRunner";
 import { useDailyProgress } from "@/hooks/useDailyProgress";
 import type { Mode } from "@/lib/flows";
 import { AuthButton } from "@/components/AuthButton";
+import { useAuth } from "@/context/AuthContext";
 
 const Index = () => {
   const [mode, setMode] = useState<Mode | null>(null);
-  const { count, activeDays, totalCompleted, increment, resetProgress } =
-    useDailyProgress();
+  const { user } = useAuth();
+
+  const {
+    count,
+    activeDays,
+    streakDays,
+    todayMinutes,
+    totalCompleted,
+    totalMinutes,
+    increment,
+    resetProgress,
+  } = useDailyProgress();
 
   const handleReset = () => {
     const confirmReset = confirm("Tem certeza que deseja recomeçar seu progresso?");
     if (confirmReset) resetProgress();
   };
+
+  const userName =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split("@")[0] ||
+    null;
 
   return (
     <main className="min-h-screen bg-[#070D1A] text-slate-100">
@@ -39,7 +56,11 @@ const Index = () => {
             onSelect={setMode}
             todayCount={count}
             activeDays={activeDays}
+            streakDays={streakDays}
+            todayMinutes={todayMinutes}
             totalCompleted={totalCompleted}
+            totalMinutes={totalMinutes}
+            userName={userName}
             onReset={handleReset}
           />
         </div>

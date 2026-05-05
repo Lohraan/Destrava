@@ -12,7 +12,11 @@ interface Props {
   onSelect: (mode: Mode) => void;
   todayCount: number;
   activeDays: number;
+  streakDays: number;
+  todayMinutes: number;
   totalCompleted: number;
+  totalMinutes: number;
+  userName: string | null;
   onReset: () => void;
 }
 
@@ -20,11 +24,13 @@ export const Home = ({
   onSelect,
   todayCount,
   activeDays,
+  streakDays,
+  todayMinutes,
   totalCompleted,
+  totalMinutes,
+  userName,
   onReset,
 }: Props) => {
-  const focusMinutes = totalCompleted * 5;
-
   return (
     <div className="relative overflow-hidden pb-20 pt-12">
       <div className="pointer-events-none absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-violet-500/10 blur-3xl" />
@@ -35,6 +41,12 @@ export const Home = ({
           <Sparkles className="h-3.5 w-3.5" />
           Modo calmo ativo
         </div>
+
+        {userName && (
+          <p className="mb-4 text-sm text-slate-400">
+            Olá, <span className="text-slate-200">{userName}</span>
+          </p>
+        )}
 
         <h1 className="text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
           Respire fundo.
@@ -50,10 +62,10 @@ export const Home = ({
           Sem pressão, sem culpa. Escolha um tamanho que caiba na sua energia.
         </p>
 
-        <div className="mt-10 flex items-center justify-center gap-10">
+        <div className="mt-10 flex items-center justify-center gap-8 sm:gap-12">
           <div>
             <p className="font-mono text-2xl font-semibold text-white">
-              {String(activeDays).padStart(2, "0")}
+              {String(streakDays).padStart(2, "0")}
             </p>
             <p className="mt-1 text-[10px] uppercase tracking-widest text-slate-500">
               sequência
@@ -62,10 +74,10 @@ export const Home = ({
 
           <div>
             <p className="font-mono text-2xl font-semibold text-white">
-              {String(focusMinutes).padStart(2, "0")}
+              {String(todayMinutes).padStart(2, "0")}
             </p>
             <p className="mt-1 text-[10px] uppercase tracking-widest text-slate-500">
-              min foco
+              min hoje
             </p>
           </div>
 
@@ -78,6 +90,12 @@ export const Home = ({
             </p>
           </div>
         </div>
+
+        <p className="mt-5 text-xs text-slate-600">
+          {activeDays} {activeDays === 1 ? "dia ativo" : "dias ativos"} ·{" "}
+          {totalCompleted} {totalCompleted === 1 ? "bloco total" : "blocos totais"} ·{" "}
+          {totalMinutes} min registrados
+        </p>
       </section>
 
       <section className="relative mx-auto mt-16 max-w-4xl rounded-[2rem] border border-cyan-300/30 bg-slate-900/60 p-6 shadow-[0_0_45px_rgba(34,211,238,0.14)] backdrop-blur-xl sm:p-10">
@@ -104,14 +122,10 @@ export const Home = ({
       </section>
 
       <section className="relative mx-auto mt-14 max-w-4xl">
-        <div className="mb-5 flex items-center justify-between">
+        <div className="mb-5">
           <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
             Sessões de foco
           </p>
-
-          <button className="text-xs text-violet-300 hover:text-violet-200">
-            Ver todas
-          </button>
         </div>
 
         <div className="space-y-3">
@@ -158,28 +172,6 @@ export const Home = ({
               <Play className="h-4 w-4 fill-current" />
             </div>
           </button>
-
-          <button
-            onClick={() => onSelect("dificil")}
-            className="group flex w-full items-center gap-4 rounded-2xl border border-white/15 bg-white/[0.035] p-4 text-left transition hover:border-violet-300/40 hover:bg-white/[0.06]"
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.04] text-violet-300">
-              <Wind className="h-6 w-6" />
-            </div>
-
-            <div className="flex-1">
-              <p className="font-semibold text-white">Respiro criativo</p>
-              <p className="mt-1 text-sm text-slate-400">
-                Um passo mínimo para dias difíceis
-              </p>
-            </div>
-
-            <p className="text-sm text-slate-400">2m</p>
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-slate-300 transition group-hover:border-violet-300/50 group-hover:text-white">
-              <Play className="h-4 w-4 fill-current" />
-            </div>
-          </button>
         </div>
       </section>
 
@@ -198,15 +190,17 @@ export const Home = ({
         <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
           <button
             onClick={() => onSelect("dificil")}
-            className="rounded-full border border-white/20 px-5 py-2 text-sm text-slate-300 transition hover:border-violet-300/40 hover:text-white"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-5 py-2 text-sm text-slate-300 transition hover:border-violet-300/40 hover:text-white"
           >
+            <Wind className="h-4 w-4" />
             Apenas respirar
           </button>
 
           <button
             onClick={() => onSelect("tentar")}
-            className="rounded-full border border-white/20 px-5 py-2 text-sm text-slate-300 transition hover:border-cyan-300/40 hover:text-white"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-5 py-2 text-sm text-slate-300 transition hover:border-cyan-300/40 hover:text-white"
           >
+            <Play className="h-4 w-4 fill-current" />
             Começar com 2 min
           </button>
 
