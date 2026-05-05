@@ -6,7 +6,7 @@ import { FEEDBACK, FLOWS, type Mode } from "@/lib/flows";
 interface Props {
   mode: Mode;
   onExit: () => void;
-  onTaskDone: () => void;
+  onTaskDone: (minutes: number) => void;
 }
 
 type Phase = "intro" | "doing" | "done" | "break";
@@ -52,7 +52,7 @@ export const FlowRunner = ({ mode, onExit, onTaskDone }: Props) => {
 
   const handleComplete = () => {
     setSoundOn(false);
-    onTaskDone();
+    onTaskDone(task.minutes);
     setFeedback(FEEDBACK[Math.floor(Math.random() * FEEDBACK.length)]);
     setPhase("done");
   };
