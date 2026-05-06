@@ -59,7 +59,6 @@ export const Home = ({
         </h1>
 
         <p className="mx-auto mt-6 max-w-xl text-sm leading-6 text-slate-400 sm:text-base">
-          Sem pressão, sem culpa. Escolha um tamanho que caiba na sua energia.
         </p>
 
         <div className="mt-10 flex items-center justify-center gap-8 sm:gap-12">
