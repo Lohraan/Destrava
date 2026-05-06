@@ -54,6 +54,7 @@ const Index = () => {
 
           <Home
             onSelect={setMode}
+            isLoggedIn={Boolean(user)}
             todayCount={count}
             activeDays={activeDays}
             streakDays={streakDays}

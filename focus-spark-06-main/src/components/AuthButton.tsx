@@ -15,6 +15,7 @@ export const AuthButton = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    window.location.reload();
   };
 
   return (
@@ -37,7 +38,7 @@ export const AuthButton = () => {
           onClick={handleLogin}
           className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs text-slate-300 hover:bg-white/[0.1] hover:text-white transition"
         >
-          Entrar com Google
+          Entrar
         </button>
       )}
     </div>

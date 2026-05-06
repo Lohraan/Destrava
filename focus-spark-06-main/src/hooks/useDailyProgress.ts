@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/AuthContext";
 
-const LOCAL_KEY = "passo.progress.v3";
 const today = () => new Date().toISOString().slice(0, 10);
 
 type DayProgress = {
@@ -29,10 +28,7 @@ const normalizeHistory = (raw: unknown): Record<string, DayProgress> => {
 
   Object.entries(raw as Record<string, any>).forEach(([date, value]) => {
     if (typeof value === "number") {
-      result[date] = {
-        count: value,
-        minutes: 0,
-      };
+      result[date] = { count: value, minutes: 0 };
       return;
     }
 
@@ -63,75 +59,40 @@ const calculateStreak = (history: Record<string, DayProgress>) => {
 };
 
 export const useDailyProgress = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [data, setData] = useState<ProgressData>(emptyData);
   const [loading, setLoading] = useState(true);
 
-  const saveLocal = (next: ProgressData) => {
-    localStorage.setItem(LOCAL_KEY, JSON.stringify(next));
-  };
-
-  const saveRemote = async (next: ProgressData) => {
-    if (!user) return;
-
-    await supabase.from("user_progress").upsert({
-      user_id: user.id,
-      count: next.count,
-      history: next.history,
-      updated_at: new Date().toISOString(),
-    });
-  };
-
   useEffect(() => {
     const loadProgress = async () => {
+      if (authLoading) return;
+
       setLoading(true);
-      const currentDay = today();
 
-      if (user) {
-        const { data: remoteData, error } = await supabase
-          .from("user_progress")
-          .select("count, history")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-        if (!error && remoteData) {
-          const history = normalizeHistory(remoteData.history);
-          const todayData = history[currentDay] ?? { count: 0, minutes: 0 };
-
-          const next: ProgressData = {
-            date: currentDay,
-            count: todayData.count,
-            history,
-          };
-
-          setData(next);
-          saveLocal(next);
-          setLoading(false);
-          return;
-        }
+      if (!user) {
+        setData(emptyData());
+        setLoading(false);
+        return;
       }
 
-      try {
-        const raw = localStorage.getItem(LOCAL_KEY);
+      const currentDay = today();
 
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          const history = normalizeHistory(parsed.history);
-          const todayData = history[currentDay] ?? { count: 0, minutes: 0 };
+      const { data: remoteData, error } = await supabase
+        .from("user_progress")
+        .select("count, history")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-          const next: ProgressData = {
-            date: currentDay,
-            count: todayData.count,
-            history,
-          };
+      if (!error && remoteData) {
+        const history = normalizeHistory(remoteData.history);
+        const todayData = history[currentDay] ?? { count: 0, minutes: 0 };
 
-          setData(next);
-
-          if (user) {
-            await saveRemote(next);
-          }
-        }
-      } catch {
+        setData({
+          date: currentDay,
+          count: todayData.count,
+          history,
+        });
+      } else {
         setData(emptyData());
       }
 
@@ -139,15 +100,19 @@ export const useDailyProgress = () => {
     };
 
     loadProgress();
-  }, [user]);
+  }, [user, authLoading]);
 
   const increment = async (completedMinutes = 0) => {
+    if (!user) return;
+
     const currentDay = today();
     const current = data.history[currentDay] ?? { count: 0, minutes: 0 };
 
+    const cleanMinutes = Math.max(0, Number(completedMinutes.toFixed(2)));
+
     const nextDay: DayProgress = {
       count: current.count + 1,
-      minutes: current.minutes + completedMinutes,
+      minutes: Number((current.minutes + cleanMinutes).toFixed(2)),
     };
 
     const next: ProgressData = {
@@ -160,50 +125,60 @@ export const useDailyProgress = () => {
     };
 
     setData(next);
-    saveLocal(next);
-    await saveRemote(next);
+
+    await supabase.from("user_progress").upsert({
+      user_id: user.id,
+      count: next.count,
+      history: next.history,
+      updated_at: new Date().toISOString(),
+    });
   };
 
   const resetProgress = async () => {
-    const clean = emptyData();
-
-    setData(clean);
-    saveLocal(clean);
-
-    if (user) {
-      await supabase.from("user_progress").upsert({
-        user_id: user.id,
-        count: 0,
-        history: {},
-        updated_at: new Date().toISOString(),
-      });
+    if (!user) {
+      setData(emptyData());
+      return;
     }
+
+    const clean = emptyData();
+    setData(clean);
+
+    await supabase.from("user_progress").upsert({
+      user_id: user.id,
+      count: 0,
+      history: {},
+      updated_at: new Date().toISOString(),
+    });
   };
 
   const activeDays = useMemo(() => {
+    if (!user) return 0;
     return Object.values(data.history).filter((day) => day.count > 0).length;
-  }, [data.history]);
+  }, [data.history, user]);
 
   const streakDays = useMemo(() => {
+    if (!user) return 0;
     return calculateStreak(data.history);
-  }, [data.history]);
+  }, [data.history, user]);
 
   const todayMinutes = useMemo(() => {
-    const current = data.history[today()];
-    return current?.minutes ?? 0;
-  }, [data.history]);
+    if (!user) return 0;
+    return data.history[today()]?.minutes ?? 0;
+  }, [data.history, user]);
 
   const totalCompleted = useMemo(() => {
+    if (!user) return 0;
     return Object.values(data.history).reduce((sum, day) => sum + day.count, 0);
-  }, [data.history]);
+  }, [data.history, user]);
 
   const totalMinutes = useMemo(() => {
+    if (!user) return 0;
     return Object.values(data.history).reduce((sum, day) => sum + day.minutes, 0);
-  }, [data.history]);
+  }, [data.history, user]);
 
   return {
-    count: data.count,
-    history: data.history,
+    count: user ? data.count : 0,
+    history: user ? data.history : {},
     activeDays,
     streakDays,
     todayMinutes,
