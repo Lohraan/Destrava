@@ -11,12 +11,20 @@ interface Props {
 
 type Phase = "intro" | "doing" | "done" | "break";
 
+const secondsToMinutes = (seconds: number) => {
+  if (seconds <= 0) return 0;
+  return Number((seconds / 60).toFixed(2));
+};
+
 export const FlowRunner = ({ mode, onExit, onTaskDone }: Props) => {
   const flow = FLOWS[mode];
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("intro");
   const [feedback, setFeedback] = useState("");
   const [soundOn, setSoundOn] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  const completedRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const task = flow.tasks[index];
@@ -43,32 +51,54 @@ export const FlowRunner = ({ mode, onExit, onTaskDone }: Props) => {
     }
   }, [soundOn, phase]);
 
-  const handleStart = () => setPhase("doing");
+  const handleStart = () => {
+    completedRef.current = false;
+    setElapsedSeconds(0);
+    setPhase("doing");
+  };
 
   const handleExit = () => {
     setSoundOn(false);
     onExit();
   };
 
-  const handleComplete = () => {
+  const handleComplete = (minutesUsed?: number) => {
+    if (completedRef.current) return;
+
+    completedRef.current = true;
     setSoundOn(false);
-    onTaskDone(task.minutes);
+
+    const realMinutes =
+      typeof minutesUsed === "number"
+        ? minutesUsed
+        : secondsToMinutes(elapsedSeconds);
+
+    onTaskDone(realMinutes);
     setFeedback(FEEDBACK[Math.floor(Math.random() * FEEDBACK.length)]);
     setPhase("done");
   };
 
-  const handleBreak = () => setPhase("break");
+  const handleBreak = () => {
+    completedRef.current = false;
+    setElapsedSeconds(0);
+    setPhase("break");
+  };
 
   const handleNext = () => {
+    completedRef.current = false;
+    setElapsedSeconds(0);
+
     if (isLast) {
       onExit();
     } else {
-      setIndex((i) => i + 1);
+      setIndex((current) => current + 1);
       setPhase("intro");
     }
   };
 
   const handleRepeat = () => {
+    completedRef.current = false;
+    setElapsedSeconds(0);
     setPhase("intro");
   };
 
@@ -85,7 +115,7 @@ export const FlowRunner = ({ mode, onExit, onTaskDone }: Props) => {
           </button>
 
           <button
-            onClick={() => setSoundOn((prev) => !prev)}
+            onClick={() => setSoundOn((current) => !current)}
             disabled={phase !== "doing"}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition ${
               phase === "doing"
@@ -126,10 +156,18 @@ export const FlowRunner = ({ mode, onExit, onTaskDone }: Props) => {
 
           {phase === "doing" && (
             <div className="flex w-full flex-col items-center">
-              <Timer minutes={task.minutes} onComplete={handleComplete} />
+              <Timer
+                minutes={task.minutes}
+                onTick={setElapsedSeconds}
+                onComplete={handleComplete}
+              />
+
+              <p className="mt-4 text-xs text-slate-500">
+                Tempo usado: {secondsToMinutes(elapsedSeconds)} min
+              </p>
 
               <button
-                onClick={handleComplete}
+                onClick={() => handleComplete()}
                 className="mt-6 text-sm text-slate-400 hover:text-slate-200"
               >
                 já terminei
@@ -187,7 +225,7 @@ export const FlowRunner = ({ mode, onExit, onTaskDone }: Props) => {
                 Você focou. Agora só descansa um pouco.
               </p>
 
-              <Timer minutes={5} onComplete={handleNext} />
+              <Timer minutes={5} onComplete={() => handleNext()} />
 
               <button
                 onClick={handleNext}

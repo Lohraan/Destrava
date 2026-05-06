@@ -3,10 +3,11 @@ import { Pause, Play } from "lucide-react";
 
 interface Props {
   minutes: number;
-  onComplete: () => void;
+  onComplete: (elapsedMinutes: number) => void;
+  onTick?: (elapsedSeconds: number) => void;
 }
 
-export const Timer = ({ minutes, onComplete }: Props) => {
+export const Timer = ({ minutes, onComplete, onTick }: Props) => {
   const total = minutes * 60;
   const [secondsLeft, setSecondsLeft] = useState(total);
   const [running, setRunning] = useState(true);
@@ -19,27 +20,32 @@ export const Timer = ({ minutes, onComplete }: Props) => {
   }, [minutes]);
 
   useEffect(() => {
+    const elapsedSeconds = total - secondsLeft;
+    onTick?.(elapsedSeconds);
+  }, [secondsLeft, total, onTick]);
+
+  useEffect(() => {
     if (!running) return;
 
     const id = window.setInterval(() => {
-      setSecondsLeft((s) => {
-        if (s <= 1) {
+      setSecondsLeft((current) => {
+        if (current <= 1) {
           window.clearInterval(id);
 
           if (!completedRef.current) {
             completedRef.current = true;
-            setTimeout(() => onComplete(), 0);
+            setTimeout(() => onComplete(minutes), 0);
           }
 
           return 0;
         }
 
-        return s - 1;
+        return current - 1;
       });
     }, 1000);
 
     return () => window.clearInterval(id);
-  }, [running, onComplete]);
+  }, [running, onComplete, minutes]);
 
   const progress = ((total - secondsLeft) / total) * 100;
   const mins = Math.floor(secondsLeft / 60);
@@ -85,7 +91,7 @@ export const Timer = ({ minutes, onComplete }: Props) => {
           </svg>
 
           <div className="absolute flex flex-col items-center">
-            <span className="text-5xl font-semibold tabular-nums text-slate-100 tracking-tight">
+            <span className="text-5xl font-semibold tabular-nums tracking-tight text-slate-100">
               {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
             </span>
 
@@ -96,7 +102,7 @@ export const Timer = ({ minutes, onComplete }: Props) => {
         </div>
 
         <button
-          onClick={() => setRunning((r) => !r)}
+          onClick={() => setRunning((value) => !value)}
           className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-7 py-3 text-sm font-medium text-white shadow-lg transition hover:scale-[1.02]"
         >
           {running ? (
